@@ -1,0 +1,24 @@
+UNIPAR Help
+----------------------
+
+1. The `File' menu
+Use the `new' option to clear the current number fields of P1,P2,Q & Theta.
+Use the `load' option to load previously saved values in the number fields.
+Use the `save' option to save all values in the number fields & graphbar.
+Use the `exit' option to quit UNIPAR without saving.
+
+2. The `View' menu
+Perspective switches between 2D and 3D viewing (only for principal forces)
+
+3. The `Show' menu
+Options in the show menu are available only for the principal forces.
+All options are used for switching on or off the display of the forces selected.
+
+4. Buttons on the top right hand corner of the screen
+The yellow button saves all values in number fields & graph bar & quits UNIPAR
+The red button quits UNIPAR without saving.
+
+5. Number fields and the GO button
+The number fields are used for entering positive and negative numbers corresponding
+to the variable in the respective column (Eg:P1,P2,Q,Theta).
+

@@ -1,0 +1,15 @@
+@del UNI.bak
+@del UNI.obj
+@del UNI.exe
+@del UNI2.bak
+@del UNI2.obj
+@del UNI2.exe
+@del UNI3.bak
+@del UNI3.obj
+@del UNI3.exe
+@del utility.bak
+@del studio.bak
+@del noname.exe
+@del noname.bak
+@del noname.obj
+@del tcchk.tc

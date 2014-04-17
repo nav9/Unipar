@@ -1,0 +1,519 @@
+struct graphmode
+{
+ int c,r,cc,rr,onoroff;
+}but,thetax,thetay,p1y,p2y,range1x,range2x,range1y,range2y;
+struct beamdetails
+       {
+	float xtheta;
+	float ytheta;
+	float ztheta;
+	int perspective;
+	int which_go;
+	int page4;/* 1 for princi forces, 2 for princi planes, 3 for mohr, 4 for graph,5 for results */
+       }beam;
+char junk[1][256],bunk[1][256];
+int range1xval,range2xval,range1yval,range2yval,mt,ct;
+int toolbar[15][10],database[71][6];
+float data[1][45];
+/*---------------------------------------------------------------------------*/
+graphicsmode()
+{
+int GD=DETECT,GM;
+initgraph(&GD,&GM,"c:\\all");
+clearviewport();
+setcolor(GREEN);
+if (initmouse()==0)
+{closegraph();restorecrtmode();printf("no mouse");getch();exit(1);}
+restrictmouse(0,0,639,479);
+}/*---end of graphicsmode---*/
+/*---------------------------------------------------------------------------*/
+drawbutton(i)
+int i;
+{
+int j,k,t1,t2,t3,t4,c,C,CC,n;
+float q;
+hidemouse();
+n=0;
+j=database[0][0];c=0;C=0,CC=0;/*---c is a counter---*/
+for(k=1;k<(j+1);k++)
+{
+ t1=database[k][1];t2=database[k][2];t3=database[k][3];t4=database[k][4];
+ if (database[k][5]==i)
+    {
+     switch (database[k][6])
+      {
+       case 1:
+	    setcolor(LIGHTRED);
+	    setfillstyle(SOLID_FILL,LIGHTRED);
+	    rectangle(t2,t1,t4,t3);
+	    floodfill(t2+1,t1+1,LIGHTRED);
+	    setcolor(WHITE);
+	    rectangle(t2,t1,t4,t3);
+	    line(t2+3,t1+3,t4-3,t3-3);
+	    line(t4-3,t1+3,t2+3,t3-3);
+	    break;
+       case 2:
+	    setcolor(YELLOW);
+	    setfillstyle(SOLID_FILL,YELLOW);
+	    rectangle(t2,t1,t4,t3);
+	    floodfill(t2+1,t1+1,YELLOW);
+	    setcolor(WHITE);
+	    rectangle(t2,t1,t4,t3);
+	    setcolor(BROWN);
+	    line(t2+3,t1+3,t4-3,t3-3);
+	    line(t4-3,t1+3,t2+3,t3-3);
+	    break;
+       case 3:
+	    setcolor(9);
+	    setfillstyle(SOLID_FILL,9);
+	    rectangle(t2,t1,t4,t3);
+	    floodfill(t2+1,t1+1,9);
+	    setcolor(11);
+	    rectangle(t2,t1,t4,t3);
+	    c++;
+	    switch(c)
+		  {
+		   case 1: strcpy(junk,"FILE");text(t1+4,t2+5,WHITE,9);break;
+		   case 2: strcpy(junk,"VIEW");text(t1+4,t2+5,WHITE,9);break;
+		   case 3: strcpy(junk,"SHOW");text(t1+4,t2+5,WHITE,9);break;
+		   case 4: strcpy(junk,"HELP");text(t1+4,t2+5,WHITE,9);break;
+		  }
+	    break;
+       case 4:
+	    setcolor(WHITE);
+	    setfillstyle(SOLID_FILL,WHITE);
+	    rectangle(t2,t1,t4,t3);
+	    floodfill(t2+1,t1+1,WHITE);
+	    setcolor(BLACK);
+	    rectangle(t2,t1,t4,t3);
+	    n++;q=data[0][n];
+	    convert(&q,2);text(t1+3,t2,BLACK,WHITE);
+	    setcolor(WHITE);line(t2+1,t1+1,t2+1,t1+10);
+	    break;
+       case 5:
+	    setcolor(LIGHTRED);
+	    setfillstyle(SOLID_FILL,LIGHTRED);
+	    rectangle(t2,t1,t4,t3);
+	    floodfill(t2+1,t1+1,LIGHTRED);
+	    setcolor(10);setfillstyle(SOLID_FILL,10);
+	    rectangle(t2,t1,t4,t3);
+	    moveto(t2+5,t1+4);
+	    linerel(9,0);
+	    linerel(0,-2);linerel(2,0);linerel(4,4);
+	    linerel(-4,4);linerel(-2,0);linerel(0,-2);
+	    linerel(-9,0);linerel(0,-4);
+	    floodfill(t2+6,t1+5,10);
+	    setcolor(1);line(t4+1,t1,t4+1,t3);
+	    line(t4+2,t1,t4+2,t3);/*---for erasing the unnecessary part of zero left near the go button---*/
+	    line(t4+3,t1,t4+3,t3);line(t4+4,t1,t4+4,t3);line(t4+5,t1,t4+5,t3);
+	    setcolor(9);line(t4+6,t1,t4+6,t3);
+	    break;
+
+       case 6:
+	    C++;
+	    switch(C)
+		  {
+		   case 1:
+			strcpy(junk,"PRINCIPAL STRESS");break;
+		   case 2:
+			strcpy(junk,"PRINCIPAL PLANES");break;
+		   case 3:
+			strcpy(junk,"MOHRS CIRCLE");break;
+		   case 4:
+			strcpy(junk,"GRAPH");break;
+		   case 5:
+			strcpy(junk,"RESULT PAGE");break;
+	      }
+            button(t2,t1,t4,t3,YELLOW,MAGENTA,LIGHTMAGENTA);
+	    break;
+       case 7:
+	    CC++;
+	    setcolor(LIGHTGRAY);
+	    setfillstyle(SOLID_FILL,LIGHTGRAY);
+	    rectangle(t2,t1,t4,t3);floodfill(t2+1,t1+1,LIGHTGRAY);
+	    setcolor(WHITE);line(t2,t1,t2,t3);line(t2,t1,t4,t1);
+	    switch(CC)
+		  {
+		   case 1: setcolor(BLACK);
+			   line(t2+17,t1+4,t2+4,t1+4);
+			   line(t2+4,t1+4,t2+4,t1+17);
+			   line(t2+4,t1+17,t2+17,t1+4);
+			   setfillstyle(SOLID_FILL,BLACK);
+			   floodfill(t2+5,t1+10,BLACK);
+			   break;
+		   case 2: setcolor(BLACK);
+			   line(t2+1,t1+13,t2+9,t1+5);
+			   line(t2+9,t1+5,t2+17,t1+13);
+			   line(t2+17,t1+13,t2+1,t1+13);
+			   setfillstyle(SOLID_FILL,BLACK);
+			   floodfill(t2+9,t1+10,BLACK);
+			   break;
+		   case 3: setcolor(BLACK);
+			   line(t2+2,t1+4,t2+15,t1+4);
+			   line(t2+15,t1+4,t2+15,t1+17);
+			   line(t2+15,t1+17,t2+2,t1+4);
+			   setfillstyle(SOLID_FILL,BLACK);
+			   floodfill(t2+9,t1+10,BLACK);
+			   break;
+		   case 4: strcpy(junk,"ISOMETRIC");text(t1+6,t2+4,BLACK,LIGHTGRAY);break;
+		   case 5: setcolor(BLACK);
+			   line(t2+14,t1+17,t2+6,t1+9);
+			   line(t2+6,t1+9,t2+14,t1+1);
+			   line(t2+14,t1+1,t2+14,t1+17);
+			   setfillstyle(SOLID_FILL,BLACK);
+			   floodfill(t2+9,t1+10,BLACK);
+			   break;
+		   case 6: setcolor(BLACK);
+			   line(t2+17,t1+8,t2+9,t1+16);
+			   line(t2+9,t1+16,t2+1,t1+8);
+			   line(t2+1,t1+8,t2+17,t1+8);
+			   setfillstyle(SOLID_FILL,BLACK);
+			   floodfill(t2+9,t1+10,BLACK);
+			   break;
+		   case 7: setcolor(BLACK);
+			   line(t2+6,t1+17,t2+14,t1+9);
+			   line(t2+14,t1+9,t2+6,t1+1);
+			   line(t2+6,t1+1,t2+6,t1+17);
+			   setfillstyle(SOLID_FILL,BLACK);
+			   floodfill(t2+9,t1+10,BLACK);
+			   break;
+		   case 8: strcpy(junk,"NORMAL");text(t1+6,t2+14,BLACK,LIGHTGRAY);break;
+		  }
+	    break;
+      }
+   }
+}
+showmouse();
+} /*---End of drawbutton---*/
+/*---------------------------------------------------------------------------*/
+drawtoolbar(i)
+int i;
+{
+int j,k,l,m,o,p,q,r,s,t;
+hidemouse();
+j=toolbar[1][i];k=toolbar[2][i];l=toolbar[3][i];m=toolbar[4][i];
+o=toolbar[6][i];p=toolbar[7][i];
+if (beam.page4==4 && i==4) setcolor(BLACK); else setcolor(o);
+q=j;r=k;s=l;t=m;
+while(r!=t)
+{
+line(q,r,s,r);r++;
+}
+setcolor(p);
+rectangle(j,k,l,m);
+switch(i)
+{
+case 1:
+     setcolor(WHITE);
+     settextstyle(SMALL_FONT,HORIZ_DIR,4);                                     outtextxy(j+3,k+4,"UNIPAR - A product of S.D. International.   [C.E.O & Author - Navin Ipe]");
+     break;
+case 3:
+     setcolor(LIGHTRED);
+     setfillstyle(SOLID_FILL,LIGHTRED);
+     j=493;k=48;l=522;m=60;
+     for(o=0;o<5;o++)
+     {
+      setcolor(LIGHTRED);
+      rectangle(j,k,l,m);
+      setfillstyle(SOLID_FILL,LIGHTRED);
+      floodfill(j+1,k+1,LIGHTRED);
+      setcolor(10);
+      rectangle(j,k,l,m);
+      switch(o)
+	    {
+	     case 0:
+		  strcpy(junk,"P1");
+		  text(k+3,j+10,10,LIGHTRED);
+		  break;
+	     case 1:
+		  strcpy(junk,"P2");
+		  text(k+3,j+10,10,LIGHTRED);
+		  break;
+	     case 2:
+		  strcpy(junk,"Q");
+		  text(k+3,j+10,10,LIGHTRED);
+		  break;
+	     case 3:
+		  strcpy(junk,"0");
+		  text(k+3,j+10,10,LIGHTRED);
+		  line(j+12,k+5,j+16,k+5);
+		  break;
+	     case 4:
+		  strcpy(junk,"GO");
+		  text(k+3,j+5,10,LIGHTRED);
+		  break;
+	    }
+      if (o==3) l=l+24; else l=l+29;
+      j=j+29;
+     }
+     setcolor(LIGHTBLUE);
+     rectangle(489,210,638,225);
+     setfillstyle(SOLID_FILL,LIGHTBLUE);floodfill(490,211,LIGHTBLUE);
+     strcpy(junk,"FORCES");
+     text(214,midpoint(489,638),YELLOW,LIGHTBLUE);
+     strcpy(junk,"ROTATION");
+     rectangle(489,360,638,375);floodfill(490,365,LIGHTBLUE);
+     text(364,midpoint(489,638),YELLOW,LIGHTBLUE);
+     break;
+}
+showmouse();
+}/*---end of drawtoolbar---*/
+
+/*---------------------------------------------------------------------------*/
+refresh(i)
+int i;
+{
+drawtoolbar(i);
+if (i==4 && (beam.page4==7 || beam.page4==6))
+   {help();}
+   else {
+	 if (i==4 && beam.page4!=4) go_pressed(beam.which_go);
+	 if (i==4 && beam.page4==4) graph();
+	}
+drawbutton(i);
+}
+/*--------------------------------------------------------------------------*/
+
+int menuoptions(r,c,o)
+int r,c,o;
+{
+char *words[]={
+	      "","NEW","LOAD","SAVE","EXIT",
+	      "PERSPECTIVE",
+	      "P1 FORCE","P2 FORCE","SHEAR","PLANE","PN","PT","PR",
+	      "TOPICS","ABOUT"
+	     };
+int i,no,no_start,mouseb,x,y;/*---no is the No. of options in the menu---*/
+int width,v,new_v,colour1,colour2,flag;/*---width is the width of the menu---*/
+flag=0;
+width=85;
+hidemouse();
+setcolor(RED);
+switch(o)
+{
+case 1: no=4;no_start=1;break;
+case 2: no=1;no_start=5;break;
+case 3: no=7;no_start=6;break;
+case 4: no=2;no_start=13;break;
+}
+setcolor(WHITE);
+i=r+15;
+while(i!=(r+17+(no*10)))
+{
+line(c,i,c+width,i);i++;
+}
+setcolor(BLACK);rectangle(c,r+15,c+width,(r+17+(no*10)));
+for(i=no_start;i<no_start+no;i++)
+{
+ strcpy(junk,words[i]);text(r+18+(i-no_start)*10,c+2,BLACK,WHITE);
+}
+showmouse();
+mouseb=0;getmousepos(&mouseb,&x,&y);
+	 while(mouseb==0)
+	      {
+	       getmousepos(&mouseb,&x,&y);
+	       if (x>c && x<(c+width) && y>(r+15) && y<(r+15+(no*10)))
+		  {
+		   new_v=(y-(r+15))/10;
+		   if (new_v!=v)
+		      {
+		       flag++;if (flag>100) flag=2;/*-flag is to see if we have entered this if block for the first time or not-*/
+		       hidemouse();
+		       for(i=1;i<3;i++)
+			  {
+			   if (flag==1) i=2;
+			   if (i==2)
+			      {
+			       v=new_v;
+			       strcpy(junk,words[no_start+v]);
+			       colour1=LIGHTBLUE;colour2=YELLOW;
+			      }
+			   else
+			      {
+			       colour1=WHITE;colour2=BLACK;
+			      }
+			   setcolor(colour1);
+			   rectangle(c+1,(v*10)+(r+16),c+width-1,(v*10)+9+(r+17));
+			   setfillstyle(SOLID_FILL,colour1);
+			   floodfill(c+3,(v*10)+(r+18),colour1);
+			   text(r+18+(v*10),c+2,colour2,colour1);
+			  } /*--end of for-*/
+			  showmouse();
+			}/*--end of second if--*/
+		  }/*--end of first if--*/
+
+	       detectclick(&mouseb,&x,&y);
+	      }/*---end of waiting for input while---*/
+getmousepos(&mouseb,&x,&y);
+if (x>c && x<(c+width) && y>(r+15) && y<(r+15+(no*10))) v++; else v=-1;
+refresh(2);refresh(4);
+return(v);
+}/*---end of menuoptions---*/
+
+/*-------------------------------------------------------------------------*/
+
+perspective(x,y,z,x2,y2,z2,tx,ty,tz)
+int x,y,z,x2,y2,z2;
+float tx,ty,tz;
+{
+int Z=500,XC=240,YC=250;
+float i,j,k;
+float r,c,X,Y;
+if (z>=Z) {printf("move the observation point farther");getch();return(0);}
+i=x;j=-y;k=z;
+rot3d(&i,&j,&k,tx,1);
+rot3d(&i,&j,&k,ty,2);
+rot3d(&i,&j,&k,tz,3);
+if (beam.perspective==1)
+   {
+    r=(Z*j)/(Z-k)+YC;
+    c=(Z*i)/(Z-k)+XC;
+   }
+else {r=j+YC;c=i+XC;}
+i=x2;j=-y2;k=z2;
+rot3d(&i,&j,&k,tx,1);
+rot3d(&i,&j,&k,ty,2);
+rot3d(&i,&j,&k,tz,3);
+if (beam.perspective==1)
+   {
+    Y=(Z*j)/(Z-k)+YC;
+    X=(Z*i)/(Z-k)+XC;
+   }
+else {X=i+XC;Y=j+YC;}
+line(c,r,X,Y);
+}/*--end of p--*/
+/*-------------------------------------------------------------------------*/
+button(c,r,C,R,fg,bg,border)
+int c,r,C,R;
+int fg,bg,border;
+{
+ int k,i;
+ k=(R-r)/2;
+ for(i=1;i<3;i++)
+ {
+  if (i==1) setcolor(bg); else setcolor(border);
+  line(c+k,r,C-k,r);
+  line(c+k,R,C-k,R);
+  arc(c+k,r+k,90,270,k);
+  arc(C-k,r+k,270,450,k);
+  setfillstyle(SOLID_FILL,bg);
+  if (i==1) floodfill(c+k,r+k,bg);
+ }
+ text(r+6,midpoint(c,C),fg,bg);
+}/*-------end of button-----*/
+/*---------------------------------------------------------------------------*/
+printvalues(R,c,e)
+int R,c,e;
+{
+float o;
+  o=range1xval;convert(&o,2);cutoff();text(R+45,c+57,BLACK,WHITE);
+  o=range2xval;convert(&o,2);cutoff();text(R+45,c+112,BLACK,WHITE);
+  o=range1yval;convert(&o,2);cutoff();text(R+45,c+57+e,BLACK,WHITE);
+  o=range2yval;convert(&o,2);cutoff();text(R+45,c+112+e,BLACK,WHITE);
+}
+/*-----------------------------------------------------------------------*/
+message(m)
+int m;
+{
+ char *w[]={
+	      "",
+	      "WELCOME TO UNIPAR",
+	      "THETA VALUE TAKEN AS 45",
+	      "ERROR IN TEXT FIELD",
+	      "DEFAULT VALUES ASSUMED",
+	      "LEFT OR RIGHT CLICK WITHIN RANGE TO INCREASE OR DECREASE VALUE",
+	      "VALUES SAVED",
+	      "VALUES LOADED",
+	      "NEW VALUES",
+	      "I/O ERROR. TERMINATING...",
+	      "NO FILE FOR LOADING"
+	     };
+ int c,cc,r,rr,i;
+ c=toolbar[1][5]+1;r=toolbar[2][5]+1;cc=toolbar[3][5]-1;rr=toolbar[4][5]-1;
+ setcolor(LIGHTBLUE);
+ for(i=c;i<=cc;i++)
+ {
+  delay(150);
+  line(i,r,i,rr);
+ }
+ strcpy(junk,w[m]);text(r+5,c+5,YELLOW,LIGHTBLUE);
+ mt=1;
+}
+/*-----------------------------------------------------------------------*/
+graphbar(c,rr,open)
+int c,rr,open;
+{
+ int R,e,i,oe;
+ R=rr-66;c++;e=175;oe=335;
+ if (open!=1) oe=c;
+ but.c=c+oe;but.cc=but.c+20;but.r=R;but.rr=rr;
+ thetax.c=c+5;thetax.cc=c+15;thetax.r=R+23;thetax.rr=R+33;
+ thetay.c=c+5+e;thetay.cc=c+15+e;thetay.r=thetax.r;thetay.rr=thetax.rr;
+ p1y.c=c+62+e;p1y.cc=c+72+e;p1y.r=thetax.r;p1y.rr=thetax.rr;
+ p2y.c=c+95+e;p2y.cc=c+105+e;p2y.r=thetax.r;p2y.rr=thetax.rr;
+ range1x.c=c+55;range1x.cc=c+95;range1x.r=R+42;range1x.rr=R+55;
+ range1y.c=c+55+e;range1y.cc=c+95+e;range1y.r=R+42;range1y.rr=R+55;
+ range2x.c=c+110;range2x.cc=c+150;range2x.r=R+42;range2x.rr=R+55;
+ range2y.c=c+110+e;range2y.cc=c+150+e;range2y.r=R+42;range2y.rr=R+55;
+
+ if (open==1)
+ {
+  setcolor(WHITE);rectangle(c,rr-1,c+335,R);setfillstyle(SOLID_FILL,WHITE);floodfill(c+2,rr-2,WHITE);
+  setcolor(LIGHTRED);rectangle(c,R+2,c+333,R+16);setfillstyle(SOLID_FILL,LIGHTRED);floodfill(c+2,R+5,LIGHTRED);
+  setcolor(LIGHTBLUE);line(c+165,R+20,c+165,rr-5);
+  for(i=0;i<2;i++)
+  {
+   if (i==1) {e=175;strcpy(junk,"Y-AXIS");} else {e=0;strcpy(junk,"X-AXIS");}
+   text(R+6,c+5+e,BLACK,LIGHTRED);
+
+   setcolor(WHITE);setfillstyle(SOLID_FILL,WHITE);
+   if (thetax.onoroff!=1) {rectangle(c+5+2,thetax.r+2,c+15-2,thetax.rr-2);floodfill(c+5+3,thetax.r+3,WHITE);}
+   if (thetay.onoroff!=1) {rectangle(c+5+2+175,thetax.r+2,c+15-2+175,thetax.rr-2);floodfill(c+5+3+175,thetax.r+3,WHITE);}
+   if (p1y.onoroff!=1) {rectangle(c+62+2+175,thetax.r+2,c+72-2+175,thetax.rr-2);floodfill(c+62+3+175,thetax.r+3,WHITE);}
+   if (p2y.onoroff!=1) {rectangle(c+95+2+175,thetax.r+2,c+105-2+175,thetax.rr-2);floodfill(c+95+3+175,thetax.r+3,WHITE);}
+
+   setcolor(LIGHTGREEN);setfillstyle(SOLID_FILL,LIGHTGREEN);
+   if (thetax.onoroff==1) {rectangle(c+5+2,thetax.r+2,c+15-2,thetax.rr-2);floodfill(c+5+3,thetax.r+3,LIGHTGREEN);}
+   if (thetay.onoroff==1) {rectangle(c+5+2+175,thetax.r+2,c+15-2+175,thetax.rr-2);floodfill(c+5+3+175,thetax.r+3,LIGHTGREEN);}
+   if (p1y.onoroff==1) {rectangle(c+62+2+175,thetax.r+2,c+72-2+175,thetax.rr-2);floodfill(c+62+3+175,thetax.r+3,LIGHTGREEN);}
+   if (p2y.onoroff==1) {rectangle(c+95+2+175,thetax.r+2,c+105-2+175,thetax.rr-2);floodfill(c+95+3+175,thetax.r+3,LIGHTGREEN);}
+
+    setcolor(BLACK);
+   rectangle(c+5+e,thetax.r,c+15+e,thetax.rr);
+   if (e!=0) rectangle(c+62+e,thetax.r,c+72+e,thetax.rr);
+   if (e!=0) rectangle(c+95+e,thetax.r,c+105+e,thetax.rr);
+   rectangle(c+55+e,R+42,c+95+e,R+55);
+   rectangle(c+110+e,R+42,c+150+e,R+55);
+
+   strcpy(junk,"THETA");text(R+25,c+20+e,BLACK,WHITE);
+   if (e!=0) {strcpy(junk,"PN");text(R+25,c+74+e,BLACK,WHITE);}
+   if (e!=0) {strcpy(junk,"PT");text(R+25,c+107+e,BLACK,WHITE);}
+   strcpy(junk,"RANGE:");text(R+45,c+5+e,BLACK,WHITE);
+   strcpy(junk,"-");text(R+45,c+98+e,BLACK,WHITE);
+  }/*--for--*/
+  printvalues(R,c,e);
+ }/*---if---*/
+ /*------print the ranges-----*/
+ setcolor(LIGHTBLUE);rectangle(c,R,but.c,rr-1);rectangle(c+1,R+1,but.c-1,rr-2);
+ rectangle(but.c,R,but.cc,rr);setfillstyle(SOLID_FILL,LIGHTBLUE);floodfill(but.c+3,R+2,LIGHTBLUE);
+
+ setcolor(LIGHTRED);
+ R+=23;
+ if (open==1)
+ {
+  line(but.c+14,R+17,but.c+6,R+9);
+  line(but.c+6,R+9,but.c+14,R+1);
+  line(but.c+14,R+1,but.c+14,R+17);
+  setfillstyle(SOLID_FILL,LIGHTRED);
+  floodfill(but.c+9,R+10,LIGHTRED);
+ }
+ if (open!=1)
+ {
+  line(but.c+6,R+17,but.c+14,R+9);
+  line(but.c+14,R+9,but.c+6,R+1);
+  line(but.c+6,R+1,but.c+6,R+17);
+  setfillstyle(SOLID_FILL,LIGHTRED);
+  floodfill(but.c+9,R+10,LIGHTRED);
+ }
+}/*-------end of graphbar--------*/
+/*--------------------------------------------------------------------*/

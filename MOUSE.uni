@@ -1,0 +1,52 @@
+union REGS z,o;
+initmouse()
+{
+z.x.ax=0;int86(0x33,&z,&o);return(o.x.ax);
+}
+
+showmouse()
+{
+z.x.ax=1;int86(0x33,&z,&o);
+}
+
+hidemouse()
+{
+z.x.ax=2;int86(0x33,&z,&o);
+}
+
+restrictmouse(c,r,x,y)
+int c,r,x,y;
+{
+z.x.ax=7;z.x.cx=c;z.x.dx=x;int86(0x33,&z,&o);z.x.ax=8;z.x.cx=r;z.x.dx=y;int86(0x33,&z,&o);
+}
+
+getmousepos(button,x,y)
+int *button,*x,*y;
+{
+z.x.ax=3;int86(0x33,&z,&o);*button=o.x.bx;*x=o.x.cx;*y=o.x.dx;
+}
+
+detectclick(b,x,y)
+int *b,*x,*y;
+{
+int button,xpos,ypos;
+getmousepos(&button,&xpos,&ypos);
+  if (button==1)
+     {
+      *b=button;
+      while (button==1)
+	    {
+	     getmousepos(&button,&xpos,&ypos);
+	     *x=xpos;*y=ypos;
+	    }
+     }
+  if (button==2)
+     {
+      *b=button;
+      while (button==2)
+	    {
+	     getmousepos(&button,&xpos,&ypos);
+	     *x=xpos;*y=ypos;
+	    }
+     }
+}

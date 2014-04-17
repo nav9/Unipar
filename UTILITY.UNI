@@ -1,0 +1,375 @@
+#define RADIAN 0.017453292
+enum axes {xaxis=1,yaxis=2,zaxis=3};
+char junk[1][256],field[1][100];
+int alpha[8][230];
+float data[1][45];
+/*------------------------------------------------------------------------*/
+convert(num,type)
+int type;
+float *num;
+{
+int k,l;
+FILE *fp;
+fp=fopen("junk.uni","w+");
+if (fp==NULL) {printf("\nNo disk present");getch();exit(1);}
+if (type==1)
+   {
+    for(k=0;junk[0][k]!='\0';k++)
+    if (junk[0][k]!='~') fprintf(fp,"%c",junk[0][k]);
+   }
+else fprintf(fp,"%f",*num);
+
+rewind(fp);
+
+if (type==2) fscanf(fp,"%s",junk); else fscanf(fp,"%f",num);
+fclose(fp);
+}
+/*------------------------------------------------------------------------*/
+inkey()
+{
+union REGS ii,oo;
+ii.h.ah=0;
+if (kbhit()) int86(22,&ii,&oo); else return(0);
+if (oo.h.al)
+   return(oo.h.al);
+else
+   return(oo.h.ah);
+}
+
+/*------------------------------------------------------------------------*/
+text(r,c,fg,bg)
+int r,c,fg,bg;
+{
+static int AC,i,j,l,k,or;
+hidemouse();
+or=r;
+for(i=0;junk[0][i]!='\0';i++)
+{
+j=junk[0][i];
+switch(toascii(j))
+      {
+case 65:
+	AC = 1;
+        break;
+case 66:
+	AC = 6;
+        break;
+case 67:
+	AC = 11;
+        break;
+case 68:
+	AC = 16;
+        break;
+case 69:
+	AC = 21;
+        break;
+case 70:
+	AC = 26;
+        break;
+case 71:
+	AC = 31;
+        break;
+case 72:
+	AC = 36;
+        break;
+case 73:
+	AC = 41;
+        break;
+case 74:
+	AC = 46;
+        break;
+case 75:
+	AC = 51;
+        break;
+case 76:
+	AC = 56;
+        break;
+case 77:
+	AC = 61;
+        break;
+case 78:
+	AC = 66;
+        break;
+case 79:
+	AC = 71;
+        break;
+case 48:
+	AC = 71;
+        break;
+case 80:
+	AC = 76;
+        break;
+case 81:
+	AC = 81;
+        break;
+case 82:
+	AC = 86;
+        break;
+case 83:
+	AC = 91;
+        break;
+case 84:
+	AC = 96;
+        break;
+case 85:
+	AC = 101;
+        break;
+case 86:
+	AC = 106;
+        break;
+case 87:
+	AC = 111;
+        break;
+case 88:
+	AC = 116;
+        break;
+case 89:
+	AC = 121;
+        break;
+case 90:
+	AC = 126;
+        break;
+case 32:
+	AC = 131;
+        break;
+case 49:
+	AC = 136;
+        break;
+case 50:
+	AC = 141;
+        break;
+case 51:
+	AC = 146;
+        break;
+case 52:
+	AC = 151;
+        break;
+case 53:
+	AC = 156;
+        break;
+case 54:
+	AC = 161;
+        break;
+case 55:
+	AC = 166;
+        break;
+case 56:
+	AC = 171;
+        break;
+case 57:
+	AC = 176;
+        break;
+case 46:
+	AC = 181;
+        break;
+case 44:
+	AC = 186;
+        break;
+case 45:
+	AC = 191;
+        break;
+case 63:
+	AC = 196;
+        break;
+case 33:
+	AC = 201;
+        break;
+case 39:
+	AC = 206;
+        break;
+case 58:
+	AC = 211;
+        break;
+case 59:
+	AC = 216;
+        break;
+case 43:
+	AC=221;
+	break;
+default:
+	AC = 131;
+
+}/*---end of switch---*/
+c=c+2;
+for(l=AC;l<(AC+5);l++)
+{
+r=or;
+for(k=1;k<8;k++)
+{
+if (alpha[k][l]=='1')
+   {putpixel(c,r,fg);}
+else
+   {putpixel(c,r,bg);}
+r++;
+}/*---end of k for---*/
+c++;
+}/*---end of l for---*/
+}/*---end of i for---*/
+showmouse();
+}/*---end of text---*/
+
+/*------------------------------------------------------------------------*/
+
+int checkfield()
+{
+int i,dot,plus,minus,ret;
+dot=0;plus=0;minus=0;ret=0;
+for(i=0;field[0][i]!='\0';i++)
+   {
+    if (field[0][i]=='.') dot++;
+    if (field[0][i]=='+')
+       {
+	if (i>0) ret=1;
+	plus++;
+       }
+    if (field[0][i]=='-')
+       {
+	if (i>0) ret=1;
+	minus++;
+       }
+   }
+if (dot>1 || plus>1 || minus>1) ret=1;
+return(ret);
+}
+/*-------------------------------------------------------------------------*/
+
+len()
+{
+int i;
+for(i=0;junk[0][i]!='\0';i++) {}
+return(i);
+}
+
+/*------------------------------------------------------------------------*/
+displayfield(tf)
+int *tf[1][10];
+{
+FILE *fp;
+int i,k;
+fp=fopen("junk.uni","w+");
+if (fp==NULL) {printf("No disk present");getch();exit(0);}
+k=tf[0][1];strcpy(junk,"");
+for(i=k;i<(k+4);i++)
+{
+ if ((tf[0][2])<=4)
+    {
+     if (i>((tf[0][2])-1)) fprintf(fp,"~"); else fprintf(fp,"%c",field[0][i]);
+    }
+ else fprintf(fp,"%c",field[0][i]);
+}
+rewind(fp);
+fscanf(fp,"%s",junk);
+fclose(fp);
+text(tf[0][5],tf[0][6],0,15);
+}
+/*-----------------------------------------------------------------------*/
+rot3d(a,b,c,T,axis)
+float *a,*b,*c,T;
+int axis;
+{
+ float x,y,z;
+ x=*a;y=*b;z=*c;
+ T=T*RADIAN;
+ switch(axis)
+       {
+
+	case 1: /*-- x axis rotn --*/
+	     *a=x;
+	     *b=y*cos(T)-z*sin(T);
+	     *c=y*sin(T)+z*cos(T);
+	     break;
+	case 2: /*-- y axis rotn --*/
+	     *a=z*sin(T)+x*cos(T);
+	     *b=y;
+	     *c=z*cos(T)-x*sin(T);
+	     break;
+        case 3: /*-- z axis rotn --*/
+	default:
+	     *a=x*cos(T)-y*sin(T);
+	     *b=x*sin(T)+y*cos(T);
+	     *c=z;
+	     break;
+       }
+}/* end of 3d rotn */
+/*------------------------------------------------------------------------*/
+midpoint(c,C)
+{
+ int t;
+ t=(len()-1)*7+5;
+ t=(C-c)/2-(t/2);
+ t=t+c;
+ return(t);
+}
+/*------------------------------------------------------------------------*/
+checkclick(c,cc,r,rr,x,y)
+int c,cc,r,rr,x,y;
+{
+if (y>r && x>c && y<rr && x<cc) return(1); else return(0);
+}
+/*-----------------------------------------------------------------------*/
+cutoff()
+{
+ junk[0][5]='\0';
+}
+/*-----------------------------------------------------------------------*/
+help()
+{
+ char j[1];
+ FILE *fp;
+ int c,r,i;
+ hidemouse();
+ setcolor(BLACK);
+ c=toolbar[1][4];r=toolbar[2][4];c+=20;r+=15;
+ if (beam.page4==6)
+    {
+     fp=fopen("uh.uni","r");
+     if (fp==NULL) {printf("File uh.uni does not exist. Program will exit now");getch();exit(1);}
+     settextstyle(SMALL_FONT,HORIZ_DIR,4);setcolor(BLACK);
+     i=1;
+     while(j!=EOF)
+	  {
+	   strcpy(j,"");
+	   fscanf(fp,"%c",&j);
+	   outtextxy(c,r,j);i++;c+=7;
+	   if (i>40) {i=1;r+=10;c=(toolbar[1][4])+20;}
+	  }
+     fclose(fp);
+    }
+ else
+    {
+     settextstyle(SMALL_FONT,HORIZ_DIR,6);setcolor(BLACK);
+     outtextxy(c,r,"About UNIPAR");r+=10;
+     outtextxy(c,r,"------------");r+=20;
+     outtextxy(c,r,"Unipar is a project designed to relieve a");r+=15;
+     outtextxy(c,r,"Mechanical Engineer of calculation and");r+=15;
+     outtextxy(c,r,"graphical representation of shear, tensile");r+=15;
+     outtextxy(c,r,"and compressive loads applied on a beam");r+=15;
+     outtextxy(c,r,"along with the forces developed. The");r+=15;
+     outtextxy(c,r,"software also displays a comprehensive");r+=15;
+     outtextxy(c,r,"graph for variation of forces.");r+=30;
+     outtextxy(c,r,"This project was made on demand from");r+=15;
+     outtextxy(c,r,"Mr.Arun Kumar (Lecturer, Civil Dept., K.I.T)");r+=15;
+     outtextxy(c,r,"This software is programmed by Navin K Ipe");r+=15;
+     outtextxy(c,r,"(the greatest programmer of all time :-)   )");r+=15;
+     outtextxy(c,r,"UNIPAR is a product of S.D.International.");r+=15;
+     outtextxy(c,r,"This software is licensed to Ms.Aparna Rao.");r+=30;
+     outtextxy(c,r,"Contact Navin at navinipe@gmail.com");r+=15;
+    }
+showmouse();
+}
+/*-----------------------------------------------------------------------*/
+
+arrow(x,y,z,t,o)
+int x,y,z,t,o;
+{
+ float c,r,Z=z,i,j,k;
+ c=x+2;r=y;
+ i=c-x;j=r-y;k=Z-z;rot3d(&i,&j,&k,(float)t,zaxis);c=i+x;r=j+y;Z=k+z;
+ t=150;
+ i=c-x;j=r-y;k=Z-z;rot3d(&i,&j,&k,(float)t,zaxis);c=i+x;r=j+y;Z=k+z;
+ if (o==3 || o==1) perspective(x,y,z,(int)c,(int)r,(int)Z,beam.xtheta,beam.ytheta,beam.ztheta);
+ t=60;
+ i=c-x;j=r-y;k=Z-z;rot3d(&i,&j,&k,(float)t,zaxis);c=i+x;r=j+y;Z=k+z;
+ if (o==3 || o==2) perspective(x,y,z,(int)c,(int)r,(int)Z,beam.xtheta,beam.ytheta,beam.ztheta);
+}/*---end of arrow---*/
+/*-----------------------------------------------------------------------*/
