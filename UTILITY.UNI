@@ -365,12 +365,12 @@ help()
      outtextxy(c,r,"software also displays a comprehensive");r+=15;
      outtextxy(c,r,"graph for variation of forces.");r+=30;
      outtextxy(c,r,"This project was made on demand from");r+=15;
-     outtextxy(c,r,"Mr.Arun Kumar (Lecturer, Civil Dept., K.I.T)");r+=15;
-     outtextxy(c,r,"This software is programmed by Navin K Ipe");r+=15;
+     outtextxy(c,r,"Mr.xyz");r+=15;
+     outtextxy(c,r,"This software is programmed by Navin");r+=15;
      outtextxy(c,r,"(the greatest programmer of all time :-)   )");r+=15;
      outtextxy(c,r,"UNIPAR is a product of S.D.International.");r+=15;
-     outtextxy(c,r,"This software is licensed to Ms.Aparna Rao.");r+=30;
-     outtextxy(c,r,"Contact Navin at navinipe@gmail.com");r+=15;
+     outtextxy(c,r,"This software is licensed to --------.");r+=30;
+     outtextxy(c,r,"Contact Navin at ---------");r+=15;
     }
 showmouse();
 }
